@@ -17,5 +17,4 @@ InetAddress::InetAddress(const char* ip, uint16_t port) : addr_len(sizeof(addr))
 
 InetAddress::~InetAddress()
 {
-
 }
