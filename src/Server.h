@@ -2,10 +2,12 @@
 
 class EventLoop;
 class Socket;
+class Acceptor;
 class Server
 {
 private:
-    EventLoop *loop;
+    EventLoop *loop;    //事件循环
+    Acceptor *acceptor;  //用于接受TCP连接
 public:
     Server(EventLoop*);
     ~Server();
