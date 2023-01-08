@@ -24,8 +24,7 @@ Epoll::~Epoll()
     delete[] events;
 }
 
-// void Epoll::addFd(int fd, uint32_t op)
-// {
+// void Epoll::addFd(int fd, uint32_t op){
 //     struct epoll_event ev;
 //     bzero(&ev, sizeof(ev));
 //     ev.data.fd = fd;
