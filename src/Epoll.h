@@ -8,12 +8,13 @@ class Epoll
 private:
     int epfd;
     struct epoll_event *events;
+
 public:
     Epoll();
     ~Epoll();
 
-    void updateChannel(Channel*);
-    void deleteChannel(Channel*);
+    void updateChannel(Channel *);
+    void deleteChannel(Channel *);
 
-    std::vector<Channel*> poll(int timeout = -1);
+    std::vector<Channel *> poll(int timeout = -1);
 };
