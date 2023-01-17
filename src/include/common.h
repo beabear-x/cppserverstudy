@@ -1,3 +1,13 @@
+/**
+ * @file Macros.h
+ * @author 冯岳松 (yuesong-feng@foxmail.com)
+ * @brief
+ * @version 0.1
+ * @date 2022-01-04
+ *
+ * @copyright Copyright (冯岳松) 2022
+ *
+ */
 #pragma once
 
 class TcpServer;
@@ -28,8 +38,7 @@ class ThreadPool;
 
 // #define UNREACHABLE(message) throw std::logic_error(message)
 
-enum RC
-{
+enum RC {
   RC_UNDEFINED,
   RC_SUCCESS,
   RC_SOCKET_ERROR,

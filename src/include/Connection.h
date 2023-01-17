@@ -1,12 +1,20 @@
+/**
+ * @file Connection.h
+ * @author 冯岳松 (yuesong-feng@foxmail.com)
+ * @brief
+ * @version 0.1
+ * @date 2022-01-04
+ *
+ * @copyright Copyright (冯岳松) 2022
+ *
+ */
 #pragma once
 #include <functional>
 #include "common.h"
 
-class Connection
-{
-public:
-  enum State
-  {
+class Connection {
+ public:
+  enum State {
     Invalid = 0,
     Connecting,
     Connected,
@@ -34,14 +42,14 @@ public:
   void onConnect(std::function<void()> fn);
   void onMessage(std::function<void()> fn);
 
-private:
+ private:
   void Business();
   RC ReadNonBlocking();
   RC WriteNonBlocking();
   RC ReadBlocking();
   RC WriteBlocking();
 
-private:
+ private:
   std::unique_ptr<Socket> socket_;
   std::unique_ptr<Channel> channel_;
 

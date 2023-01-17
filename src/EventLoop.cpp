@@ -1,32 +1,30 @@
+/**
+ * @file EventLoop.cpp
+ * @author 冯岳松 (yuesong-feng@foxmail.com)
+ * @brief
+ * @version 0.1
+ * @date 2022-01-04
+ *
+ * @copyright Copyright (冯岳松) 2022
+ *
+ */
 #include "EventLoop.h"
-#include "Epoll.h"
-#include "Channel.h"
 #include <vector>
+#include "Channel.h"
+#include "Poller.h"
 
-EventLoop::EventLoop() : ep(nullptr), quit(false)
-{
-    ep = new Epoll();
-}
+EventLoop::EventLoop() { poller_ = std::make_unique<Poller>(); }
 
-EventLoop::~EventLoop()
-{
-    delete ep;
-}
+EventLoop::~EventLoop() {}
 
-void EventLoop::loop()
-{
-    while (!quit)
-    {
-        std::vector<Channel *> chs;
-        chs = ep->poll();
-        for (auto it = chs.begin(); it != chs.end(); ++it)
-        {
-            (*it)->handleEvent();
-        }
+void EventLoop::Loop() const {
+  while (true) {
+    for (Channel *active_ch : poller_->Poll()) {
+      active_ch->HandleEvent();
     }
+  }
 }
 
-void EventLoop::updateChannel(Channel *ch)
-{
-    ep->updateChannel(ch);
-}
+void EventLoop::UpdateChannel(Channel *ch) const { poller_->UpdateChannel(ch); }
+
+void EventLoop::DeleteChannel(Channel *ch) const { poller_->DeleteChannel(ch); }

@@ -1,12 +1,21 @@
+/**
+ * @file TcpServer.h
+ * @author 冯岳松 (yuesong-feng@foxmail.com)
+ * @brief
+ * @version 0.1
+ * @date 2022-01-04
+ *
+ * @copyright Copyright (冯岳松) 2022
+ *
+ */
 #pragma once
 #include "common.h"
 #include <functional>
 #include <unordered_map>
 #include <vector>
 
-class TcpServer
-{
-public:
+class TcpServer {
+ public:
   DISALLOW_COPY_AND_MOVE(TcpServer);
   TcpServer();
   ~TcpServer();
@@ -18,7 +27,7 @@ public:
   void onConnect(std::function<void(Connection *)> fn);
   void onRecv(std::function<void(Connection *)> fn);
 
-private:
+ private:
   std::unique_ptr<EventLoop> main_reactor_;
   std::unique_ptr<Acceptor> acceptor_;
 
