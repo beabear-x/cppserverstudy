@@ -1,73 +1,74 @@
 #include "Channel.h"
-
-#include <unistd.h>
-
-#include <utility>
-
 #include "EventLoop.h"
 #include "Socket.h"
+#include <unistd.h>
+#include <sys/epoll.h>
 
-const short Channel::READ_EVENT = 1;
-const short Channel::WRITE_EVENT = 2;
-const short Channel::ET = 4;
+Channel::Channel(EventLoop *_loop, int _fd)
+    : loop(_loop), fd(_fd), events(0), ready(0), inEpoll(false) {}
 
-Channel::Channel(int fd, EventLoop *loop) : fd_(fd), loop_(loop), listen_events_(0), ready_events_(0), exist_(false) {}
-
-Channel::~Channel() { loop_->DeleteChannel(this); }
-
-void Channel::HandleEvent() const
+Channel::~Channel()
 {
-  if (ready_events_ & READ_EVENT)
-  {
-    read_callback_();
-  }
-  if (ready_events_ & WRITE_EVENT)
-  {
-    write_callback_();
-  }
+    if (fd != -1)
+    {
+        close(fd);
+        fd = -1;
+    }
 }
 
-void Channel::EnableRead()
+void Channel::handleEvent()
 {
-  listen_events_ |= READ_EVENT;
-  loop_->UpdateChannel(this);
+    if (ready & (EPOLLIN | EPOLLPRI))
+    {
+        readCallback();
+    }
+    if (ready & (EPOLLOUT))
+    {
+        writeCallback();
+    }
 }
 
-void Channel::EnableWrite()
+void Channel::enableRead()
 {
-  listen_events_ |= WRITE_EVENT;
-  loop_->UpdateChannel(this);
+    events |= EPOLLIN | EPOLLPRI;
+    loop->updateChannel(this);
 }
 
-void Channel::EnableET()
+void Channel::useET()
 {
-  listen_events_ |= ET;
-  loop_->UpdateChannel(this);
+    events |= EPOLLET;
+    loop->updateChannel(this);
 }
-int Channel::fd() const { return fd_; }
-
-short Channel::listen_events() const { return listen_events_; }
-short Channel::ready_events() const { return ready_events_; }
-
-bool Channel::exist() const { return exist_; }
-
-void Channel::set_exist(bool in) { exist_ = in; }
-
-void Channel::set_ready_event(short ev)
+int Channel::getFd()
 {
-  if (ev & READ_EVENT)
-  {
-    ready_events_ |= READ_EVENT;
-  }
-  if (ev & WRITE_EVENT)
-  {
-    ready_events_ |= WRITE_EVENT;
-  }
-  if (ev & ET)
-  {
-    ready_events_ |= ET;
-  }
+    return fd;
 }
 
-void Channel::set_read_callback(std::function<void()> const &callback) { read_callback_ = std::move(callback); }
-void Channel::set_write_callback(std::function<void()> const &callback) { write_callback_ = std::move(callback); }
+uint32_t Channel::getEvents()
+{
+    return events;
+}
+uint32_t Channel::getReady()
+{
+    return ready;
+}
+
+bool Channel::getInEpoll()
+{
+    return inEpoll;
+}
+
+void Channel::setInEpoll(bool _in)
+{
+    inEpoll = _in;
+}
+
+void Channel::setReady(uint32_t _ev)
+{
+    ready = _ev;
+}
+
+void Channel::setReadCallback(std::function<void()> _cb)
+{
+    readCallback = _cb;
+}

@@ -1,39 +1,37 @@
 #include "ThreadPool.h"
 
-ThreadPool::ThreadPool(unsigned int size)
+ThreadPool::ThreadPool(int size) : stop(false)
 {
-  for (unsigned int i = 0; i < size; ++i)
-  {
-    workers_.emplace_back(std::thread([this]()
-                                      {
-      while (true) {
-        std::function<void()> task;
-        {
-          std::unique_lock<std::mutex> lock(queue_mutex_);
-          condition_variable_.wait(lock, [this]() { return stop_ || !tasks_.empty(); });
-          if (stop_ && tasks_.empty()) {
-            return;
-          }
-          task = tasks_.front();
-          tasks_.pop();
-        }
-        task();
-      } }));
-  }
+    for (int i = 0; i < size; ++i)
+    {
+        threads.emplace_back(std::thread([this]()
+                                         {
+            while(true){
+                std::function<void()> task;
+                {
+                    std::unique_lock<std::mutex> lock(tasks_mtx);
+                    cv.wait(lock, [this](){
+                        return stop || !tasks.empty();
+                    });
+                    if(stop && tasks.empty()) return;
+                    task = tasks.front();
+                    tasks.pop();
+                }
+                task();
+            } }));
+    }
 }
 
 ThreadPool::~ThreadPool()
 {
-  {
-    std::unique_lock<std::mutex> lock(queue_mutex_);
-    stop_ = true;
-  }
-  condition_variable_.notify_all();
-  for (std::thread &th : workers_)
-  {
-    if (th.joinable())
     {
-      th.join();
+        std::unique_lock<std::mutex> lock(tasks_mtx);
+        stop = true;
     }
-  }
+    cv.notify_all();
+    for (std::thread &th : threads)
+    {
+        if (th.joinable())
+            th.join();
+    }
 }
