@@ -1,20 +1,10 @@
-/**
- * @file Socket.h
- * @author 冯岳松 (yuesong-feng@foxmail.com)
- * @brief
- * @version 0.1
- * @date 2022-01-04
- *
- * @copyright Copyright (冯岳松) 2022
- *
- */
-
 #pragma once
 #include <string>
 #include "common.h"
 
-class Socket {
- public:
+class Socket
+{
+public:
   DISALLOW_COPY_AND_MOVE(Socket);
   Socket();
   ~Socket();
@@ -30,6 +20,6 @@ class Socket {
   bool IsNonBlocking() const;
   size_t RecvBufSize() const;
 
- private:
+private:
   int fd_;
 };

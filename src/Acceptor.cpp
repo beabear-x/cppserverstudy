@@ -1,13 +1,3 @@
-/**
- * @file Acceptor.cpp
- * @author 冯岳松 (yuesong-feng@foxmail.com)
- * @brief
- * @version 0.1
- * @date 2022-01-04
- *
- * @copyright Copyright (冯岳松) 2022
- *
- */
 #include "Acceptor.h"
 
 #include <fcntl.h>
@@ -15,7 +5,8 @@
 #include "Channel.h"
 #include "Socket.h"
 
-Acceptor::Acceptor(EventLoop *loop) {
+Acceptor::Acceptor(EventLoop *loop)
+{
   socket_ = std::make_unique<Socket>();
   assert(socket_->Create() == RC_SUCCESS);
   assert(socket_->Bind("127.0.0.1", 1234) == RC_SUCCESS);
@@ -30,19 +21,23 @@ Acceptor::Acceptor(EventLoop *loop) {
 
 Acceptor::~Acceptor() {}
 
-RC Acceptor::AcceptConnection() const{
+RC Acceptor::AcceptConnection() const
+{
   int clnt_fd = -1;
-  if( socket_->Accept(clnt_fd) != RC_SUCCESS ) {
+  if (socket_->Accept(clnt_fd) != RC_SUCCESS)
+  {
     return RC_ACCEPTOR_ERROR;
   }
   // TODO: remove
-  fcntl(clnt_fd, F_SETFL, fcntl(clnt_fd, F_GETFL) | O_NONBLOCK);  // 新接受到的连接设置为非阻塞式
-  if (new_connection_callback_) {
+  fcntl(clnt_fd, F_SETFL, fcntl(clnt_fd, F_GETFL) | O_NONBLOCK); // 新接受到的连接设置为非阻塞式
+  if (new_connection_callback_)
+  {
     new_connection_callback_(clnt_fd);
   }
   return RC_SUCCESS;
 }
 
-void Acceptor::set_new_connection_callback(std::function<void(int)> const &callback) {
+void Acceptor::set_new_connection_callback(std::function<void(int)> const &callback)
+{
   new_connection_callback_ = std::move(callback);
 }

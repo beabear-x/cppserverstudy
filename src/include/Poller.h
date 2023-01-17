@@ -1,13 +1,3 @@
-/**
- * @file Poller.h
- * @author 冯岳松 (yuesong-feng@foxmail.com)
- * @brief
- * @version 0.1
- * @date 2022-01-04
- *
- * @copyright Copyright (冯岳松) 2022
- *
- */
 #pragma once
 #include "common.h"
 #include <vector>
@@ -20,8 +10,9 @@
 #include <sys/event.h>
 #endif
 
-class Poller {
- public:
+class Poller
+{
+public:
   DISALLOW_COPY_AND_MOVE(Poller);
   Poller();
   ~Poller();
@@ -31,7 +22,7 @@ class Poller {
 
   std::vector<Channel *> Poll(long timeout = -1) const;
 
- private:
+private:
   int fd_;
 
 #ifdef OS_LINUX

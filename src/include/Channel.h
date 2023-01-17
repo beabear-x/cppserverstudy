@@ -1,23 +1,13 @@
-/**
- * @file Channel.h
- * @author 冯岳松 (yuesong-feng@foxmail.com)
- * @brief
- * @version 0.1
- * @date 2022-01-04
- *
- * @copyright Copyright (冯岳松) 2022
- *
- */
 #pragma once
 #include <functional>
 #include "common.h"
 
-class Channel {
- public:
+class Channel
+{
+public:
   DISALLOW_COPY_AND_MOVE(Channel);
   Channel(int fd, EventLoop *loop);
   ~Channel();
-
 
   void HandleEvent() const;
   void EnableRead();
@@ -38,7 +28,7 @@ class Channel {
   static const short WRITE_EVENT;
   static const short ET;
 
- private:
+private:
   int fd_;
   EventLoop *loop_;
   short listen_events_;
